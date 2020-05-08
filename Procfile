@@ -1,0 +1,1 @@
+worker: python house_scraper.py
