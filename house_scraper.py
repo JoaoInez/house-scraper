@@ -4,11 +4,8 @@ import os
 import schedule
 import time
 from email.message import EmailMessage
-from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 from functools import reduce
-
-load_dotenv()
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36'  # noqa: E501
@@ -25,10 +22,9 @@ def fetch_html(url):
 
 
 def send_email(apts):
-    EMAIL_SENDER = os.getenv("EMAIL_SENDER")
-    PASSWORD = os.getenv("PASSWORD")
-    EMAIL_RECEIVERS = [os.getenv("EMAIL_RECEIVER_1"),
-                       os.getenv("EMAIL_RECEIVER_2")]
+    EMAIL_SENDER = os.getenv('EMAIL_SENDER')
+    PASSWORD = os.getenv('PASSWORD')
+    EMAIL_RECEIVERS = os.getenv('EMAIL_RECEIVERS').split(',')
 
     msg = EmailMessage()
     msg['Subject'] = 'Apartment(s) found!'
@@ -51,7 +47,7 @@ def send_email(apts):
 
 
 def price_check(price):
-    return price > 0 and price < 20000
+    return 0 < price <= int(os.getenv('MAX_BUY_PRICE'))
 
 
 def scrape_montepio():
@@ -59,7 +55,7 @@ def scrape_montepio():
 
     def scrape_page(page=1, parsed_apartments=[]):
         html_doc = fetch_html(
-            f'{base_url}/Comprar/Apartamentos/Lisboa/Lisboa/?pn={page}'
+            f'{base_url}{os.getenv("MONTEPIO_URL")}{page}'
         )
         soup = BeautifulSoup(html_doc, 'html.parser')
 
@@ -78,10 +74,10 @@ def scrape_montepio():
 
                 parsed_price = 0
                 if '/' in apt_price:
-                    parsed_price += int("".join(apt_price.split('/')
+                    parsed_price += int(''.join(apt_price.split('/')
                                                 [0][:-2].split()))
                 elif apt_price != 'Preço sob consulta':
-                    parsed_price += int("".join(apt_price[:-2].split()))
+                    parsed_price += int(''.join(apt_price[:-2].split()))
 
                 if price_check(parsed_price):
                     apt_name = property_content.find(
@@ -111,7 +107,7 @@ def scrape_houses():
         send_email(montepio_apts)
 
 
-schedule.every().day.at("19:00").do(scrape_houses)
+schedule.every().day.at(os.getenv('SCHEDULED_TIME')).do(scrape_houses)
 
 while True:
     schedule.run_pending()
