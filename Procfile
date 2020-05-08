@@ -1,1 +1,1 @@
-worker: python house_scraper.py
+web: python house_scraper.py
