@@ -110,7 +110,7 @@ def scrape_houses():
 def send_deploy_email():
     EMAIL_SENDER = os.getenv('EMAIL_SENDER')
     PASSWORD = os.getenv('PASSWORD')
-    EMAIL_RECEIVERS = os.getenv('EMAIL_RECEIVERS').split(',')[0]
+    EMAIL_RECEIVERS = os.getenv('EMAIL_RECEIVERS').split(',')[0:1]
 
     msg = EmailMessage()
     msg['Subject'] = 'App deployed to Heroku!'
