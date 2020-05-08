@@ -107,6 +107,26 @@ def scrape_houses():
         send_email(montepio_apts)
 
 
+def send_deploy_email():
+    EMAIL_SENDER = os.getenv('EMAIL_SENDER')
+    PASSWORD = os.getenv('PASSWORD')
+    EMAIL_RECEIVERS = os.getenv('EMAIL_RECEIVERS').split(',')[0]
+
+    msg = EmailMessage()
+    msg['Subject'] = 'App deployed to Heroku!'
+    msg['From'] = EMAIL_SENDER
+    msg['To'] = ', '.join(EMAIL_RECEIVERS)
+
+    msg.set_content('The heroku python app works')
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(EMAIL_SENDER, PASSWORD)
+
+        smtp.send_message(msg)
+
+
+send_deploy_email()
+
 schedule.every().day.at(os.getenv('SCHEDULED_TIME')).do(scrape_houses)
 
 while True:
