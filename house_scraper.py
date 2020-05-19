@@ -1,8 +1,8 @@
 import urllib.request
 import smtplib
 import os
-# import schedule
-# import time
+import schedule
+import time
 from email.message import EmailMessage
 from bs4 import BeautifulSoup
 from functools import reduce
@@ -123,10 +123,9 @@ def send_deploy_email():
         smtp.send_message(msg)
 
 
-send_deploy_email()
-
 # schedule.every().day.at(os.getenv('SCHEDULED_TIME')).do(scrape_houses)
+schedule.every().minute.do(send_deploy_email)
 
-# while True:
-#     schedule.run_pending()
-#     time.sleep(1)
+while True:
+    schedule.run_pending()
+    time.sleep(1)
