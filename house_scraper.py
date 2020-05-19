@@ -1,15 +1,13 @@
 import urllib.request
 import smtplib
 import os
-import schedule
-import time
+# import schedule
+# import time
 from email.message import EmailMessage
 from bs4 import BeautifulSoup
 from functools import reduce
 
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36'  # noqa: E501
-}
+headers = {'User-Agent': os.getenv('USER_AGENT')}
 
 
 def fetch_html(url):
@@ -127,8 +125,8 @@ def send_deploy_email():
 
 send_deploy_email()
 
-schedule.every().day.at(os.getenv('SCHEDULED_TIME')).do(scrape_houses)
+# schedule.every().day.at(os.getenv('SCHEDULED_TIME')).do(scrape_houses)
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+# while True:
+#     schedule.run_pending()
+#     time.sleep(1)
